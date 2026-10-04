@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>База по ИИ</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="База по ИИ — курс Тимура Жумагазеева">
+<meta property="og:description" content="Четыре живых занятия: от первого аккаунта в ChatGPT до собственного ИИ-агента. Без программирования и сложных слов.">
+<meta property="og:url" content="https://timzh777.github.io/baza-po-ii/">
+<meta property="og:image" content="https://timzh777.github.io/baza-po-ii/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="description" content="Курс Тимура Жумагазеева для новичков и предпринимателей: четыре живых занятия от первого аккаунта до собственного ИИ-агента.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Макет: тёмная «мастерская» — живое поле токенов на фоне, герой с окном агента, программа как маршрут из 4 остановок */
+:root {
+  color-scheme: dark;
+  --bg: #0b0f1a;
+  --bg-deep: #151233;
+  --panel: rgba(21, 18, 51, 0.78);
+  --panel-solid: #141127;
+  --text: #f4f4f8;
+  --muted: #b3b4cf;
+  --faint: #7d7fa3;
+  --violet: #7c3aed;
+  --violet-soft: #a78bfa;
+  --cyan: #22d3ee;
+  --pink: #f472b6;
+  --line: rgba(167, 139, 250, 0.22);
+  --line-strong: rgba(167, 139, 250, 0.45);
+  --font-display: "Unbounded", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Golos Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.25rem;
+  --step-2: 1.6rem;
+  --step-3: clamp(1.9rem, 3.4vw, 2.6rem);
+  --step-5: clamp(3.2rem, 9.5vw, 7.4rem);
+  --radius: 14px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: radial-gradient(120% 80% at 80% -10%, var(--bg-deep) 0%, var(--bg) 60%) fixed, var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  padding-inline: clamp(16px, 4vw, 48px);
+  padding-block: 0;
+  overflow-x: hidden;
+}
+#field { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.glow { position: fixed; z-index: 0; pointer-events: none; border-radius: 50%; filter: blur(90px); opacity: 0.38; }
+.glow.a { width: 46vmax; height: 46vmax; left: -14vmax; top: -12vmax; background: var(--violet); }
+.glow.b { width: 34vmax; height: 34vmax; right: -12vmax; top: 30vh; background: var(--cyan); opacity: 0.16; }
+.glow.c { width: 30vmax; height: 30vmax; left: 30vw; bottom: -18vmax; background: var(--pink); opacity: 0.16; }
+main, footer { position: relative; z-index: 1; max-width: 1120px; margin-inline: auto; }
+a { color: var(--cyan); }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 6px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h2 { font-size: var(--step-3); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+h3 { font-size: var(--step-1); font-weight: 700; line-height: 1.3; }
+p { margin: 0; }
+section { padding-block: clamp(48px, 7vw, 88px); display: grid; gap: 32px; }
+.intro { max-width: 62ch; color: var(--muted); font-size: var(--step-1); line-height: 1.5; }
+
+/* Кнопки */
+.actions { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 26px; border-radius: 999px; font-weight: 600; font-size: var(--step-0);
+  text-decoration: none; transition: transform .15s ease, box-shadow .2s ease, background .2s ease; }
+.btn-main { background: linear-gradient(100deg, var(--violet) 0%, #9b5cf6 55%, var(--pink) 130%); color: #fff; box-shadow: 0 10px 34px -10px rgba(124, 58, 237, .8); }
+.btn-main:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -10px rgba(124, 58, 237, .95); }
+.btn-ghost { color: var(--text); border: 1px solid var(--line-strong); background: rgba(11, 15, 26, .4); }
+.btn-ghost:hover { background: rgba(167, 139, 250, .12); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+
+/* Герой */
+.hero { padding-block: clamp(40px, 7vw, 88px) clamp(48px, 7vw, 80px); grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(32px, 5vw, 64px); align-items: center; }
+.author-line { color: var(--muted); font-size: var(--step--1); display: flex; align-items: center; gap: 10px; }
+.author-line .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
+.hero h1 { font-size: var(--step-5); font-weight: 800; line-height: 0.95; letter-spacing: -0.035em; margin-block: 18px 22px;
+  background: linear-gradient(95deg, #ffffff 10%, var(--violet-soft) 45%, var(--cyan) 75%, var(--pink) 105%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero .intro { margin-bottom: 26px; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 30px 0 0; padding: 0; }
+.facts div { border-top: 1px solid var(--line-strong); padding-top: 12px; }
+.facts dt { font-family: var(--font-display); font-weight: 700; font-size: var(--step-1); }
+.facts dd { margin: 4px 0 0; color: var(--muted); font-size: var(--step--1); line-height: 1.45; }
+
+/* Окно агента */
+.pane { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .8), 0 0 0 1px rgba(34, 211, 238, .06) inset; overflow: hidden; min-width: 0; }
+.pane-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono); font-size: 0.8rem; color: var(--faint); }
+.pane-head .folder { color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
+.pane-head svg { width: 15px; height: 15px; }
+.pane-body { padding: 18px 18px 20px; font-family: var(--font-mono); font-size: 0.86rem; line-height: 1.7; display: grid; gap: 4px; }
+.prompt { background: rgba(124, 58, 237, .16); border: 1px solid rgba(167, 139, 250, .35); border-radius: 10px; padding: 10px 12px; color: var(--text); margin-bottom: 10px; }
+.prompt b { color: var(--violet-soft); font-weight: 500; margin-right: 8px; }
+.step { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 6px; color: var(--muted); }
+.step .ok { color: var(--cyan); display: inline-block; }
+.step .file { color: var(--text); }
+.ask { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); color: var(--text); }
+.ask .q { color: var(--pink); }
+.caret { display: inline-block; width: 8px; height: 1.05em; background: var(--cyan); vertical-align: -2px; margin-left: 4px; animation: blink 1.1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes pop { 0% { transform: scale(.4); color: var(--faint); } 70% { transform: scale(1.25); } 100% { transform: scale(1); color: var(--cyan); } }
+.loaded .step .ok { animation: pop .45s ease both; }
+.loaded .step:nth-of-type(2) .ok { animation-delay: .35s; } .loaded .step:nth-of-type(3) .ok { animation-delay: .6s; }
+.loaded .step:nth-of-type(4) .ok { animation-delay: .85s; } .loaded .step:nth-of-type(5) .ok { animation-delay: 1.1s; }
+.loaded .step:nth-of-type(6) .ok { animation-delay: 1.35s; } .loaded .step:nth-of-type(7) .ok { animation-delay: 1.6s; }
+
+/* Для кого */
+.who { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 36px); }
+.who article { display: grid; gap: 10px; align-content: start; }
+.who .mark { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: rgba(124, 58, 237, .18); border: 1px solid var(--line); }
+.who .mark svg { width: 22px; height: 22px; stroke: var(--violet-soft); }
+.who p { color: var(--muted); }
+
+/* Чат и агент */
+.versus { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.side { display: grid; gap: 16px; align-content: start; padding: 24px; border-radius: var(--radius); border: 1px solid var(--line); background: rgba(11, 15, 26, .55); min-width: 0; }
+.side.agent { border-color: rgba(34, 211, 238, .4); background: linear-gradient(160deg, rgba(34, 211, 238, .08), rgba(124, 58, 237, .1)); }
+.side h3 { font-size: var(--step-2); }
+.side > p { color: var(--muted); }
+.demo { display: grid; gap: 8px; font-size: var(--step--1); }
+.bubble { padding: 10px 14px; border-radius: 14px; max-width: 92%; line-height: 1.5; }
+.bubble.me { justify-self: end; background: rgba(124, 58, 237, .3); border-bottom-right-radius: 4px; }
+.bubble.bot { background: rgba(244, 244, 248, .07); border-bottom-left-radius: 4px; color: var(--muted); }
+.demo.files { font-family: var(--font-mono); font-size: 0.82rem; }
+.demo.files .line { display: flex; gap: 10px; color: var(--muted); }
+.demo.files .ok { color: var(--cyan); }
+.demo.files .open { color: var(--text); }
+.note { color: var(--faint); font-size: var(--step--1); }
+
+/* Программа */
+.route { list-style: none; margin: 0; padding: 0; display: grid; }
+.lesson { display: grid; grid-template-columns: 64px minmax(0, 1fr); column-gap: clamp(14px, 3vw, 28px); }
+.rail { position: relative; display: flex; justify-content: center; }
+.rail::before { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--violet), var(--cyan)); opacity: .55; }
+.lesson:first-child .rail::before { top: 28px; }
+.lesson:last-child .rail::before { bottom: auto; height: 28px; }
+.num { position: relative; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 1.35rem;
+  background: var(--panel-solid); border: 2px solid var(--violet-soft); box-shadow: 0 0 0 6px var(--bg), 0 0 26px rgba(124, 58, 237, .55); }
+.lesson:nth-child(2) .num { border-color: #8f8ff8; } .lesson:nth-child(3) .num { border-color: #5fb7f4; } .lesson:nth-child(4) .num { border-color: var(--cyan); box-shadow: 0 0 0 6px var(--bg), 0 0 26px rgba(34, 211, 238, .55); }
+.lesson-body { padding-bottom: clamp(36px, 5vw, 56px); display: grid; gap: 14px; min-width: 0; }
+.lesson:last-child .lesson-body { padding-bottom: 0; }
+.lesson-meta { color: var(--faint); font-size: var(--step--1); padding-top: 4px; }
+.lesson h3 { font-size: var(--step-2); }
+.topics { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 28px; }
+.topics li { position: relative; padding-left: 20px; color: var(--muted); }
+.topics li::before { content: ""; position: absolute; left: 2px; top: 0.62em; width: 8px; height: 8px; border-radius: 2px; transform: rotate(45deg); background: var(--violet-soft); opacity: .8; }
+.result { padding: 12px 16px; border-radius: 10px; background: rgba(34, 211, 238, .08); border: 1px solid rgba(34, 211, 238, .25); }
+.result b { color: var(--cyan); font-weight: 600; }
+
+/* Что останется */
+.finale { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(28px, 5vw, 56px); }
+.finale .text { display: grid; gap: 18px; }
+.keep { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.keep li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; }
+.keep svg { width: 24px; height: 24px; stroke: var(--cyan); margin-top: 2px; }
+.keep b { display: block; font-weight: 600; }
+.keep span { color: var(--muted); font-size: var(--step--1); }
+.tree { padding: 18px 20px 22px; font-family: var(--font-mono); font-size: 0.86rem; line-height: 1.85; }
+.tree .row { display: grid; grid-template-columns: minmax(0, 15ch) minmax(0, 1fr); gap: 12px; }
+.tree .row span:first-child { color: var(--text); }
+.tree .row span:last-child { color: var(--faint); }
+.tree .dir span:first-child { color: var(--violet-soft); }
+.tree .indent span:first-child { padding-left: 2ch; }
+
+/* Как проходит обучение */
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; counter-reset: flow; }
+.flow li { counter-increment: flow; display: grid; gap: 8px; align-content: start; padding: 20px; border-radius: var(--radius); background: rgba(11, 15, 26, .55); border: 1px solid var(--line); }
+.flow li::before { content: counter(flow); font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; color: var(--violet-soft); line-height: 1; }
+.flow p { color: var(--muted); font-size: var(--step--1); }
+
+/* Ведущий */
+.author { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: clamp(20px, 4vw, 40px); }
+.avatar { width: clamp(96px, 14vw, 140px); aspect-ratio: 1; max-width: 100%; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(2rem, 4vw, 2.8rem); background: conic-gradient(from 210deg, var(--violet), var(--cyan), var(--pink), var(--violet)); color: #fff;
+  box-shadow: 0 0 0 6px rgba(11, 15, 26, .9), 0 0 50px rgba(124, 58, 237, .5); }
+.author .text { display: grid; gap: 12px; max-width: 62ch; }
+.author .role { color: var(--violet-soft); font-weight: 500; }
+.author p:last-child { color: var(--muted); }
+
+/* Вопросы */
+.faq { display: grid; gap: 10px; max-width: 860px; }
+details { border: 1px solid var(--line); border-radius: 12px; background: rgba(11, 15, 26, .55); }
+details[open] { border-color: var(--line-strong); }
+summary { cursor: pointer; list-style: none; padding: 18px 54px 18px 20px; font-weight: 600; position: relative; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-family: var(--font-display); font-size: 1.3rem; color: var(--violet-soft); transition: transform .2s ease; }
+details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+details p { padding: 0 20px 18px; color: var(--muted); max-width: 70ch; }
+
+/* Запись */
+.signup { text-align: center; justify-items: center; padding-block: clamp(64px, 10vw, 120px); }
+.signup .box { display: grid; gap: 20px; justify-items: center; padding: clamp(32px, 6vw, 56px) clamp(20px, 5vw, 56px); border-radius: 22px; max-width: 760px; width: 100%;
+  background: linear-gradient(150deg, rgba(124, 58, 237, .28), rgba(21, 18, 51, .85) 55%, rgba(34, 211, 238, .14)); border: 1px solid var(--line-strong); }
+.signup p { color: var(--muted); max-width: 52ch; }
+.handle { font-family: var(--font-mono); color: var(--text); user-select: all; }
+footer { padding-block: 28px 40px; border-top: 1px solid var(--line); color: var(--faint); font-size: var(--step--1); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+@media (max-width: 900px) {
+  .hero, .finale { grid-template-columns: minmax(0, 1fr); }
+  .who { grid-template-columns: minmax(0, 1fr); }
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .versus { grid-template-columns: minmax(0, 1fr); }
+  .topics { grid-template-columns: minmax(0, 1fr); }
+  .facts { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .facts div { padding-block: 12px 4px; }
+  .flow { grid-template-columns: minmax(0, 1fr); }
+  .lesson { grid-template-columns: 46px minmax(0, 1fr); }
+  .num { width: 44px; height: 44px; font-size: 1.1rem; }
+  .lesson:first-child .rail::before { top: 22px; }
+  .lesson:last-child .rail::before { height: 22px; }
+  .author { grid-template-columns: minmax(0, 1fr); justify-items: start; }
+  .tree .row { grid-template-columns: minmax(0, 1fr); gap: 0; margin-bottom: 6px; line-height: 1.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .caret, .loaded .step .ok { animation: none; }
+  .btn { transition: none; }
+}
+</style>
+
+</head>
+<body>
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="glow a" aria-hidden="true"></div>
+<div class="glow b" aria-hidden="true"></div>
+<div class="glow c" aria-hidden="true"></div>
+
+<main>
+  <section class="hero" id="top">
+    <div>
+      <p class="author-line"><span class="dot" aria-hidden="true"></span>Курс Тимура Жумагазеева для новичков и предпринимателей</p>
+      <h1>База по ИИ</h1>
+      <p class="intro">Четыре живых занятия: от первого аккаунта в ChatGPT до собственного ИИ-агента, который знает ваши цели и сам работает с вашими файлами. Без программирования и сложных слов.</p>
+      <div class="actions">
+        <a class="btn btn-main" href="https://t.me/TimurZh777" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
+          Записаться в Telegram
+        </a>
+        <a class="btn btn-ghost" href="#program">Смотреть программу</a>
+      </div>
+      <dl class="facts">
+        <div><dt>4 занятия</dt><dd>по 90 минут, вживую</dd></div>
+        <div><dt>Практика</dt><dd>домашнее задание после каждого урока</dd></div>
+        <div><dt>Поддержка</dt><dd>чат в Telegram на весь курс</dd></div>
+      </dl>
+    </div>
+
+    <figure class="pane" style="margin:0" aria-label="Пример: агент устанавливает себе архитектуру по шаблону курса">
+      <div class="pane-head">
+        <span class="folder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v8.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>мой-агент</span>
+        <span>Claude Code</span>
+      </div>
+      <div class="pane-body">
+        <div class="prompt"><b>Вы</b>Установи мне архитектуру Агента</div>
+        <div class="step"><span class="ok">✓</span><span>Скачал шаблон агента с GitHub</span></div>
+        <div class="step"><span class="ok">✓</span><span><span class="file">CLAUDE.md</span> — правила работы</span></div>
+        <div class="step"><span class="ok">✓</span><span><span class="file">SOUL.md</span> — характер и стиль</span></div>
+        <div class="step"><span class="ok">✓</span><span><span class="file">USER.md</span> — кто вы и чем заняты</span></div>
+        <div class="step"><span class="ok">✓</span><span><span class="file">GOALS.md</span> — ваши цели</span></div>
+        <div class="step"><span class="ok">✓</span><span><span class="file">MEMORY.md</span> — память агента</span></div>
+        <div class="ask">Настрою агента под вас: задам 10 вопросов.<br><span class="q">Вопрос 1 из 10.</span> Как вас зовут и чем вы занимаетесь?<span class="caret" aria-hidden="true"></span></div>
+      </div>
+    </figure>
+  </section>
+
+  <section aria-labelledby="who-title">
+    <h2 id="who-title">Курс для вас, если</h2>
+    <div class="who">
+      <article>
+        <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><path d="M12 17.5h.01"/></svg></div>
+        <h3>Вы только начинаете</h3>
+        <p>Слышали про ChatGPT, но не знаете, с чего начать. Каждое новое слово объясняем простым языком, весь путь показываем на экране.</p>
+      </article>
+      <article>
+        <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5V7"/><path d="M3 12.5h18"/></svg></div>
+        <h3>Вы ведёте своё дело</h3>
+        <p>Хотите, чтобы ИИ забрал рутину: письма, тексты, таблицы, страницу для клиентов. И экономил вам часы каждую неделю.</p>
+      </article>
+      <article>
+        <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 9-4 3 4 3"/><path d="m16 9 4 3-4 3"/><path d="m13.5 6-3 12"/></svg></div>
+        <h3>Вы не программист</h3>
+        <p>И становиться им не нужно. Код пишет агент. Вы ставите задачу, проверяете результат и сохраняете готовую работу.</p>
+      </article>
+    </div>
+  </section>
+
+  <section aria-labelledby="vs-title">
+    <h2 id="vs-title">Чат отвечает. Агент действует</h2>
+    <p class="intro">Главная идея курса. Большинство людей пользуется ИИ как чатом. Мы идём дальше и учимся работать с агентами.</p>
+    <div class="versus">
+      <div class="side">
+        <h3>Чат</h3>
+        <p>Вы спрашиваете, он отвечает текстом. Скопировать, вставить, сохранить в файл вы делаете сами.</p>
+        <div class="demo" aria-label="Пример работы с чатом">
+          <div class="bubble me">Напиши текст для страницы о моих услугах</div>
+          <div class="bubble bot">Вот вариант текста: «Помогаю предпринимателям…» Скопируйте его и вставьте на свою страницу.</div>
+        </div>
+      </div>
+      <div class="side agent">
+        <h3>Агент</h3>
+        <p>Вы ставите задачу, он сам создаёт и правит файлы в папке проекта и показывает, что изменил.</p>
+        <div class="demo files" aria-label="Пример работы с агентом">
+          <div class="bubble me" style="font-family: var(--font-body)">Сделай страницу о моих услугах</div>
+          <div class="line"><span class="ok">✓</span>создан index.html</div>
+          <div class="line"><span class="ok">✓</span>создан styles.css</div>
+          <div class="line"><span class="ok">✓</span><span class="open">страница открыта в браузере</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="note">На курсе вы работаете с двумя агентами: Codex от OpenAI и Claude Code от Anthropic.</p>
+  </section>
+
+  <section id="program" aria-labelledby="program-title">
+    <h2 id="program-title">Программа: четыре занятия</h2>
+    <ol class="route">
+      <li class="lesson">
+        <div class="rail"><span class="num" aria-hidden="true">1</span></div>
+        <div class="lesson-body">
+          <p class="lesson-meta">Урок 1, 90 минут</p>
+          <h3>Что такое ИИ и как начать работу</h3>
+          <ul class="topics">
+            <li>Что умеет ИИ и где он ошибается</li>
+            <li>Как мы пришли от чат-ботов к агентам</li>
+            <li>Карта инструментов курса</li>
+            <li>Регистрируем Gmail, ChatGPT, Claude и GitHub</li>
+            <li>Устанавливаем VS Code и Git</li>
+            <li>Разбираем, какие подписки нужны</li>
+          </ul>
+          <p class="result"><b>После урока</b> все сервисы открыты, рабочие программы установлены и запускаются.</p>
+        </div>
+      </li>
+      <li class="lesson">
+        <div class="rail"><span class="num" aria-hidden="true">2</span></div>
+        <div class="lesson-body">
+          <p class="lesson-meta">Урок 2, 90 минут</p>
+          <h3>Рабочее место с ИИ-агентами</h3>
+          <ul class="topics">
+            <li>Токены, контекст и режимы моделей простыми словами</li>
+            <li>VS Code: окно, папки, настройки, терминал</li>
+            <li>Codex и Claude Code в рабочей папке</li>
+            <li>Git: сохраняем версии проекта</li>
+            <li>Первый приватный репозиторий на GitHub</li>
+            <li>Единый порядок работы с агентом</li>
+          </ul>
+          <p class="result"><b>После урока</b> вы открываете папку, запускаете агента, видите его правки и находите проект на GitHub.</p>
+        </div>
+      </li>
+      <li class="lesson">
+        <div class="rail"><span class="num" aria-hidden="true">3</span></div>
+        <div class="lesson-body">
+          <p class="lesson-meta">Урок 3, 90 минут</p>
+          <h3>Промпты и вайбкодинг</h3>
+          <ul class="topics">
+            <li>Формула промпта: роль, задача, контекст, формат, ограничения, пример</li>
+            <li>Уточнения, итерации и проверка ответа</li>
+            <li>Работа с файлами и таблицами</li>
+            <li>Пять этапов цифрового продукта</li>
+            <li>Вайбкодинг: страница без знания кода</li>
+            <li>Ваша HTML-страница на GitHub</li>
+          </ul>
+          <p class="result"><b>После урока</b> вы даёте агенту задачу, проверяете файлы и видите готовую страницу в браузере.</p>
+        </div>
+      </li>
+      <li class="lesson">
+        <div class="rail"><span class="num" aria-hidden="true">4</span></div>
+        <div class="lesson-body">
+          <p class="lesson-meta">Урок 4, 90 минут, из них 20 минут на ваши вопросы</p>
+          <h3>Свой персональный агент</h3>
+          <ul class="topics">
+            <li>Правила для агента: CLAUDE.md и AGENTS.md</li>
+            <li>Профиль, цели, проекты и память</li>
+            <li>Навыки (skills) и плагины</li>
+            <li>Разрешения и безопасность</li>
+            <li>Сборка агента по нашему шаблону</li>
+            <li>Три проверочных задания агенту</li>
+          </ul>
+          <p class="result"><b>После урока</b> агент знает вашу роль, не выдумывает факты, задаёт уточняющие вопросы и спрашивает разрешения перед рискованным действием.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="finale" aria-labelledby="keep-title">
+    <div class="text">
+      <h2 id="keep-title">Что останется у вас после курса</h2>
+      <ul class="keep">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><div><b>Рабочее место</b><span>VS Code с подключёнными Codex и Claude Code</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3"/><rect x="4" y="10" width="16" height="11" rx="2"/></svg><div><b>Приватный репозиторий на GitHub</b><span>копия ваших проектов со всей историей изменений</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 14l-2 2 2 2M16 14l2 2-2 2"/></svg><div><b>Своя HTML-страница</b><span>сделанная агентом по вашему заданию</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M10 16.5h4"/></svg><div><b>Персональный агент</b><span>знает ваши цели, проекты и правила работы</span></div></li>
+      </ul>
+    </div>
+    <figure class="pane" style="margin:0" aria-label="Из чего состоит персональный агент: папка с файлами">
+      <div class="pane-head">
+        <span class="folder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v8.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>мой-агент</span>
+        <span>агент — это папка с файлами</span>
+      </div>
+      <div class="tree">
+        <div class="row"><span>CLAUDE.md</span><span>правила для Claude Code</span></div>
+        <div class="row"><span>AGENTS.md</span><span>правила для Codex</span></div>
+        <div class="row"><span>SOUL.md</span><span>характер и стиль общения</span></div>
+        <div class="row"><span>USER.md</span><span>кто вы и чем заняты</span></div>
+        <div class="row"><span>MISSION.md</span><span>ваша главная цель</span></div>
+        <div class="row"><span>GOALS.md</span><span>цели на ближайшие месяцы</span></div>
+        <div class="row"><span>PROJECTS.md</span><span>ваши проекты</span></div>
+        <div class="row"><span>MEMORY.md</span><span>что агент помнит о вас</span></div>
+        <div class="row dir"><span>skills/</span><span>навыки агента</span></div>
+        <div class="row dir indent"><span>…</span><span>посты, презентации, анализ</span></div>
+      </div>
+    </figure>
+  </section>
+
+  <section aria-labelledby="flow-title">
+    <h2 id="flow-title">Как проходит обучение</h2>
+    <ol class="flow">
+      <li><h3>Живое занятие</h3><p>90 минут теории и показа на экране. Задаёте вопросы по ходу и в конце урока.</p></li>
+      <li><h3>Материалы в Telegram</h3><p>После урока: инструкция со скриншотами, словарик новых слов и чек-лист.</p></li>
+      <li><h3>Практика дома</h3><p>Повторяете всё шаг за шагом в своём темпе по домашнему заданию.</p></li>
+      <li><h3>Чат поддержки</h3><p>Застряли — пишете номер шага в чат, и мы вместе разбираемся.</p></li>
+    </ol>
+  </section>
+
+  <section class="author" aria-labelledby="author-title">
+    <div class="avatar" aria-hidden="true">ТЖ</div>
+    <div class="text">
+      <h2 id="author-title">Тимур Жумагазеев</h2>
+      <p class="role">Специалист и преподаватель в области искусственного интеллекта и криптовалют</p>
+      <p>Каждый день работаю с ИИ-агентами. Мой собственный агент работает на сервере круглосуточно и отвечает мне в Telegram. На курсе показываю тот же путь, которым прошёл сам, только без лишних шагов.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="faq-title">
+    <h2 id="faq-title">Частые вопросы</h2>
+    <div class="faq">
+      <details>
+        <summary>Нужно ли уметь программировать?</summary>
+        <p>Нет. Курс сделан для людей без технической подготовки. Код пишет агент, а вы учитесь ставить ему задачу и проверять результат.</p>
+      </details>
+      <details>
+        <summary>Что нужно для занятий?</summary>
+        <p>Компьютер или ноутбук на Windows или macOS и стабильный интернет. Телефона недостаточно: мы работаем в программе VS Code.</p>
+      </details>
+      <details>
+        <summary>Нужны ли платные подписки?</summary>
+        <p>Да. Агенты Codex и Claude Code работают по платной подписке ChatGPT и Claude. Подписки оплачиваются напрямую сервисам и не входят в стоимость курса. На первом занятии разбираем, какой тариф выбрать; актуальные цены — на сайтах сервисов.</p>
+      </details>
+      <details>
+        <summary>Из какой страны можно учиться?</summary>
+        <p>Из любой, где ChatGPT, Claude и GitHub работают официально и подписку можно оплатить обычной банковской картой. Обход региональных ограничений на курсе не разбираем.</p>
+      </details>
+      <details>
+        <summary>Что если у меня что-то не получится?</summary>
+        <p>После каждого занятия в Telegram приходит инструкция со скриншотами, словарик и чек-лист. Если застряли на каком-то шаге, напишите в чат поддержки его номер, и мы поможем.</p>
+      </details>
+      <details>
+        <summary>Что дальше после курса?</summary>
+        <p>Продвинутый курс: агент на своём сервере круглосуточно, свой Telegram-бот, автоматизация задач бизнеса, сайты и приложения.</p>
+      </details>
+      <details>
+        <summary>Сколько стоит курс и когда старт?</summary>
+        <p>Напишите мне в Telegram: расскажу даты ближайшего потока и стоимость.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="signup" aria-labelledby="signup-title">
+    <div class="box">
+      <h2 id="signup-title">Начните с первого занятия</h2>
+      <p>Напишите в Telegram. Отвечу на вопросы, расскажу даты ближайшего потока и стоимость.</p>
+      <a class="btn btn-main" href="https://t.me/TimurZh777" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
+        Записаться на курс
+      </a>
+      <p class="handle">@TimurZh777</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 Тимур Жумагазеев</span>
+  <span>Курс «База по ИИ»</span>
+</footer>
+
+<script>
+(function () {
+  document.documentElement.classList.add('loaded');
+  var canvas = document.getElementById('field');
+  var ctx = canvas.getContext('2d');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // кусочки слов — так модель «видит» текст: токенами
+  var words = ['про', 'мпт', 'аге', 'нт', 'кон', 'текст', 'то', 'кен', 'мо', 'дель', 'Git', 'Hub', 'VS', 'Code', 'Cla', 'ude', 'Co', 'dex', 'push', 'commit',
+    '.md', 'skill', 'HTML', 'чат', 'ИИ', 'зада', 'ча', 'пап', 'ка', 'фай', 'лы', 'GPT', 'агент', 'цели', 'память'];
+  var colors = ['167,139,250', '34,211,238', '244,114,182', '244,244,248'];
+  var nodes = [], w = 0, h = 0, dpr = 1, raf = 0;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth; h = window.innerHeight;
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var count = Math.round(Math.min(70, Math.max(26, w * h / 26000)));
+    nodes = [];
+    for (var i = 0; i < count; i++) {
+      nodes.push({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.18, vy: -0.06 - Math.random() * 0.16,
+        word: words[i % words.length], c: colors[i % colors.length],
+        a: (0.18 + Math.random() * 0.32) * (w < 700 ? 0.55 : 1), size: 11 + Math.random() * 5
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    var maxD = Math.min(170, w / 5);
+    for (var i = 0; i < nodes.length; i++) {
+      for (var j = i + 1; j < nodes.length; j++) {
+        var dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < maxD) {
+          ctx.strokeStyle = 'rgba(' + nodes[i].c + ',' + (0.16 * (1 - d / maxD)).toFixed(3) + ')';
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
+        }
+      }
+    }
+    for (var k = 0; k < nodes.length; k++) {
+      var n = nodes[k];
+      ctx.fillStyle = 'rgba(' + n.c + ',' + (n.a + 0.25).toFixed(2) + ')';
+      ctx.beginPath(); ctx.arc(n.x, n.y, 1.8, 0, Math.PI * 2); ctx.fill();
+      ctx.font = '500 ' + n.size.toFixed(1) + 'px "JetBrains Mono", Consolas, monospace';
+      ctx.fillStyle = 'rgba(' + n.c + ',' + n.a.toFixed(2) + ')';
+      ctx.fillText(n.word, n.x + 6, n.y - 6);
+    }
+  }
+
+  function step() {
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i];
+      n.x += n.vx; n.y += n.vy;
+      if (n.y < -30) { n.y = h + 30; n.x = Math.random() * w; }
+      if (n.x < -40) n.x = w + 40; else if (n.x > w + 40) n.x = -40;
+    }
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+
+  function start() { cancelAnimationFrame(raf); if (reduce) { draw(); } else { raf = requestAnimationFrame(step); } }
+  resize(); draw(); start();
+  window.addEventListener('resize', function () { resize(); draw(); });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) cancelAnimationFrame(raf); else start(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+})();
+</script>
+
+</body>
+</html>
