@@ -82,7 +82,7 @@ section { padding-block: clamp(48px, 7vw, 88px); display: grid; gap: 32px; }
 .btn svg { width: 20px; height: 20px; flex: none; }
 
 /* Герой */
-.hero { padding-block: clamp(40px, 7vw, 88px) clamp(48px, 7vw, 80px); grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(32px, 5vw, 64px); align-items: center; }
+.hero { padding-block: clamp(40px, 7vw, 72px) clamp(32px, 5vw, 56px); grid-template-columns: minmax(0, 1fr); gap: clamp(32px, 5vw, 64px); align-items: center; }
 .author-line { color: var(--muted); font-size: var(--step--1); display: flex; align-items: center; gap: 10px; }
 .author-line .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
 .hero h1 { font-size: var(--step-5); font-weight: 800; line-height: 0.95; letter-spacing: -0.035em; margin-block: 18px 22px;
@@ -161,9 +161,9 @@ section { padding-block: clamp(48px, 7vw, 88px); display: grid; gap: 32px; }
 .result b { color: var(--cyan); font-weight: 600; }
 
 /* Что останется */
-.finale { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(28px, 5vw, 56px); }
+.finale { grid-template-columns: minmax(0, 1fr); align-items: center; gap: clamp(28px, 5vw, 56px); }
 .finale .text { display: grid; gap: 18px; }
-.keep { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.keep { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 28px; }
 .keep li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; }
 .keep svg { width: 24px; height: 24px; stroke: var(--cyan); margin-top: 2px; }
 .keep b { display: block; font-weight: 600; }
@@ -233,6 +233,7 @@ footer .call a { font-size: var(--step-1); }
   .versus { grid-template-columns: minmax(0, 1fr); }
   .topics { grid-template-columns: minmax(0, 1fr); }
   .facts { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .keep { grid-template-columns: minmax(0, 1fr); }
   .facts div { padding-block: 12px 4px; }
   .flow { grid-template-columns: minmax(0, 1fr); }
   .lesson { grid-template-columns: 46px minmax(0, 1fr); }
@@ -276,22 +277,6 @@ footer .call a { font-size: var(--step-1); }
       </dl>
     </div>
 
-    <figure class="pane" style="margin:0" aria-label="Пример: агент устанавливает себе архитектуру по шаблону курса">
-      <div class="pane-head">
-        <span class="folder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v8.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>мой-агент</span>
-        <span>Claude Code</span>
-      </div>
-      <div class="pane-body">
-        <div class="prompt"><b>Вы</b>Установи мне архитектуру Агента</div>
-        <div class="step"><span class="ok">✓</span><span>Скачал шаблон агента с GitHub</span></div>
-        <div class="step"><span class="ok">✓</span><span><span class="file">CLAUDE.md</span> — правила работы</span></div>
-        <div class="step"><span class="ok">✓</span><span><span class="file">SOUL.md</span> — характер и стиль</span></div>
-        <div class="step"><span class="ok">✓</span><span><span class="file">USER.md</span> — кто вы и чем заняты</span></div>
-        <div class="step"><span class="ok">✓</span><span><span class="file">GOALS.md</span> — ваши цели</span></div>
-        <div class="step"><span class="ok">✓</span><span><span class="file">MEMORY.md</span> — память агента</span></div>
-        <div class="ask">Настрою агента под вас: задам 10 вопросов.<br><span class="q">Вопрос 1 из 10.</span> Как вас зовут и чем вы занимаетесь?<span class="caret" aria-hidden="true"></span></div>
-      </div>
-    </figure>
   </section>
 
   <section aria-labelledby="who-title">
@@ -421,24 +406,6 @@ footer .call a { font-size: var(--step-1); }
         <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M10 16.5h4"/></svg><div><b>Персональный агент</b><span>знает ваши цели, проекты и правила работы</span></div></li>
       </ul>
     </div>
-    <figure class="pane" style="margin:0" aria-label="Из чего состоит персональный агент: папка с файлами">
-      <div class="pane-head">
-        <span class="folder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v8.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/></svg>мой-агент</span>
-        <span>агент — это папка с файлами</span>
-      </div>
-      <div class="tree">
-        <div class="row"><span>CLAUDE.md</span><span>правила для Claude Code</span></div>
-        <div class="row"><span>AGENTS.md</span><span>правила для Codex</span></div>
-        <div class="row"><span>SOUL.md</span><span>характер и стиль общения</span></div>
-        <div class="row"><span>USER.md</span><span>кто вы и чем заняты</span></div>
-        <div class="row"><span>MISSION.md</span><span>ваша главная цель</span></div>
-        <div class="row"><span>GOALS.md</span><span>цели на ближайшие месяцы</span></div>
-        <div class="row"><span>PROJECTS.md</span><span>ваши проекты</span></div>
-        <div class="row"><span>MEMORY.md</span><span>что агент помнит о вас</span></div>
-        <div class="row dir"><span>skills/</span><span>навыки агента</span></div>
-        <div class="row dir indent"><span>…</span><span>посты, презентации, анализ</span></div>
-      </div>
-    </figure>
   </section>
 
   <section aria-labelledby="flow-title">
